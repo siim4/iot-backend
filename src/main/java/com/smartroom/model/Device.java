@@ -1,5 +1,8 @@
 package com.smartroom.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.UUID;
 
 public class Device {
@@ -9,12 +12,38 @@ public class Device {
     private boolean online;
     private boolean poweredOn;
 
+
     public Device(String name, Type type) {
         this.ID = UUID.randomUUID();
         this.setName(name);
         this.type = type;
         this.online = false;
         this.poweredOn = false;
+    }
+
+    /**
+     * Restores device from stored data.
+     *
+     * <p>Gets values from keys in JSON object.</p>
+     * @param id
+     * @param name
+     * @param type
+     * @param online
+     * @param poweredOn
+     */
+    @JsonCreator
+    public Device(
+            @JsonProperty("id") UUID id,
+            @JsonProperty("name") String name,
+            @JsonProperty("type") Type type,
+            @JsonProperty("online") boolean online,
+            @JsonProperty("poweredOn") boolean poweredOn
+    ) {
+        this.ID = id;
+        this.name = name;
+        this.type = type;
+        this.online = online;
+        this.poweredOn = poweredOn;
     }
 
     public UUID getID() throws NullPointerException {
@@ -26,6 +55,10 @@ public class Device {
 
     public String getName() {
         return name;
+    }
+
+    public boolean getPoweredOn() {
+        return poweredOn;
     }
 
     public Type getType() {

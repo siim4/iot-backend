@@ -1,35 +1,25 @@
 package com.smartroom;
 
-import com.smartroom.model.Device;
-import com.smartroom.repository.DeviceRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.smartroom.persistence.JsonDB;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.io.IOException;
+import java.nio.file.Path;
 
 public class Main {
     static void main(String[] args) {
-        DeviceRepository repository = new DeviceRepository();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonDB db = new JsonDB(Path.of("data", "db.json"), mapper);
         try {
-            Device light = new Device("Bedroom Light", Device.Type.LIGHT);
-            repository.addDevice(light);
-            //repository.showAllDevices();
-            Optional<Device> other = repository.findById(light.getID());
-            Device device = other.get();
-            repository.addDevice(device);
-            repository.showAllDevices();
-
-            Device device2 = null;
-            UUID id = null;
-            Optional<Device> d3 = repository.findById(id);
-            if (d3.isPresent()) {
-                Device d4 = d3.get();
-            } else {
-                System.out.println("device couldn't be found by ID.");
-            }
-
-
-        } catch (IllegalArgumentException | NullPointerException e) {
-            System.out.println("Enter a valid name.");
+            db.initialize();
+            JsonNode root = db.readJson();
+            System.out.println(root);
+            JsonNode devices = root.get("devices");
+            System.out.println(devices);
+        } catch (IOException ioe) {
+            System.err.println("Couldn't read file: " + ioe.getMessage());
         }
+
     }
 }
