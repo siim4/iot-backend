@@ -3,7 +3,6 @@ package com.smartroom.persistence;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smartroom.model.Device;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -61,7 +60,7 @@ public class JsonDB {
         return mapper.valueToTree(value);
     }
 
-    public Device toDevice(JsonNode node) throws JsonProcessingException {
-        return mapper.treeToValue(node, Device.class);
+    public <T> T toEntity(JsonNode node, Class<T> type) throws JsonProcessingException {
+        return mapper.treeToValue(node, type);
     }
 }

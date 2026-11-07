@@ -9,6 +9,7 @@ public class Device {
     private final UUID ID;
     private String name;
     private Type type;
+    private UUID ownerId;
     private boolean online;
     private boolean poweredOn;
 

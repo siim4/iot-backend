@@ -4,6 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/***
+ * Defines CRUD operations.
+ * @param <T>
+ */
+
 public interface Repository<T> {
     long count();
 
