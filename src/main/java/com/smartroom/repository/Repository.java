@@ -7,15 +7,15 @@ import java.util.UUID;
 public interface Repository<T> {
     long count();
 
-    boolean save(T entity);
+    boolean save(T entity) throws Exception;
 
-    Optional<T> findById(UUID id);
+    Optional<T> findById(UUID id) throws Exception;
 
-    List<T> findAll();
+    List<T> findAll() throws Exception;
 
-    boolean existsById(UUID id);
+    boolean existsById(UUID id) throws Exception;
 
-    boolean deleteById(UUID id);
+    boolean deleteById(UUID id) throws Exception;
 
-    boolean delete(T entity);
+    boolean delete(T entity) throws Exception;
 }
