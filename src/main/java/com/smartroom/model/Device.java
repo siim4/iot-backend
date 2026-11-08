@@ -3,21 +3,23 @@ package com.smartroom.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class Device {
-    private final UUID ID;
+    private final UUID id;
     private String name;
     private Type type;
-    private UUID ownerId;
+    private final UUID ownerId;
     private boolean online;
     private boolean poweredOn;
 
 
-    public Device(String name, Type type) {
-        this.ID = UUID.randomUUID();
+    public Device(String name, Type type, UUID ownerId) {
+        this.id = UUID.randomUUID();
         this.setName(name);
-        this.type = type;
+        this.ownerId = Objects.requireNonNull(ownerId, "Owner ID cannot be null");
+        this.type = Objects.requireNonNull(type, "Device type cannot be null");
         this.online = false;
         this.poweredOn = false;
     }
@@ -35,23 +37,30 @@ public class Device {
     @JsonCreator
     public Device(
             @JsonProperty("id") UUID id,
+            @JsonProperty("ownerId") UUID ownerId,
             @JsonProperty("name") String name,
             @JsonProperty("type") Type type,
             @JsonProperty("online") boolean online,
             @JsonProperty("poweredOn") boolean poweredOn
     ) {
-        this.ID = id;
-        this.name = name;
-        this.type = type;
+        this.id = Objects.requireNonNull(id, "Device ID cannot be null");
+        this.ownerId = Objects.requireNonNull(ownerId, "Owner ID cannot be null");
+        this.type = Objects.requireNonNull(type, "Device type cannot be null");
+
+        this.setName(name);
         this.online = online;
         this.poweredOn = poweredOn;
     }
 
-    public UUID getID() throws NullPointerException {
-        if (ID == null) {
+    public UUID getId() {
+        if (id == null) {
             throw new NullPointerException("ID was not assigned.");
         }
-        return ID;
+        return id;
+    }
+
+    public UUID getOwnerId() {
+        return ownerId;
     }
 
     public String getName() {
@@ -87,8 +96,8 @@ public class Device {
     }
 
     public void setName(String name) throws IllegalArgumentException {
-        if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("The name can't be null or empty");
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("The name can't be null or blank.");
         } else {
             this.name = name;
         }
@@ -96,7 +105,7 @@ public class Device {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + ": " + ID + "\n"
+        return this.getClass().getSimpleName() + ": " + id + "\n"
                 + "-".repeat(15) + "\n"
                 + "Device name: " + name + "\n"
                 + "Device type: " + type + "\n"

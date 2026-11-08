@@ -3,18 +3,33 @@ package com.smartroom;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartroom.controller.DeviceController;
 import com.smartroom.persistence.JsonDB;
+import com.smartroom.persistence.RelationalDB;
 import com.smartroom.repository.JsonDeviceRepository;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class Main {
     static void main(String[] args) {
         ObjectMapper mapper = new ObjectMapper();
         JsonDB db = new JsonDB(Path.of("data", "db.json"), mapper);
+        RelationalDB rdb = new RelationalDB(
+                "jdbc:postgresql://localhost:5432/smartroom",
+                "smartroom",
+                "devpassword"
+        );
+
+        try (Connection connection = rdb.getConnection()) {
+            System.out.println("Connected to PostgreSQL");
+        } catch (SQLException e) {
+            System.out.println("DB error: " + e.getMessage());
+        }
         try {
+
             db.initialize();
 
             JsonDeviceRepository deviceRepository = new JsonDeviceRepository(db);

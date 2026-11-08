@@ -36,6 +36,7 @@ public abstract class Controller<T> implements HttpHandler {
         if (path.equals(basePath)) {
             switch (method) {
                 case "GET" -> handleGetAll(exchange);
+                case "POST" -> handlePost(exchange);
                 default -> methodNotAllowed(exchange);
             }
             return;
@@ -126,4 +127,6 @@ public abstract class Controller<T> implements HttpHandler {
         exchange.getResponseHeaders().set("Allow", "GET");
         sendStatus(exchange, 405);
     }
+
+    protected abstract void handlePost(HttpExchange exchange) throws IOException;
 }

@@ -20,6 +20,6 @@ public class JsonDeviceRepository extends JsonRepository<Device> {
 
     @Override
     protected UUID getId(Device device) {
-        return device.getID();
+        return device.getId();
     }
 }
