@@ -2,9 +2,11 @@ package com.smartroom;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartroom.controller.DeviceController;
+import com.smartroom.model.Device;
 import com.smartroom.persistence.JsonDB;
 import com.smartroom.persistence.RelationalDB;
-import com.smartroom.repository.JsonDeviceRepository;
+import com.smartroom.repository.JdbcDeviceRepository;
+import com.smartroom.repository.Repository;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
@@ -30,13 +32,14 @@ public class Main {
         }
         try {
 
-            db.initialize();
+            //db.initialize();
 
-            JsonDeviceRepository deviceRepository = new JsonDeviceRepository(db);
-            deviceRepository.load();
+            //Repository<Device> deviceRepository = new JsonDeviceRepository(db);
+            //deviceRepository.load();
+            Repository<Device> deviceRepository = new JdbcDeviceRepository(rdb);
 
             /*
-            For this test, after intializing the database and loading into the repo,
+            For this test, after initializing the database and loading into the repo,
             we start the server and register the controller.
              */
             HttpServer server = HttpServer.create(

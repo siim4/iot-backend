@@ -6,11 +6,11 @@ import java.util.UUID;
 
 /***
  * Defines CRUD operations.
- * @param <T>
+ * @param <T> the domain entity type.
  */
 
 public interface Repository<T> {
-    long count();
+    long count() throws Exception;
 
     boolean save(T entity) throws Exception;
 
