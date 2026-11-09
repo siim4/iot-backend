@@ -21,7 +21,7 @@ public class JdbcDeviceRepository implements Repository<Device> {
 
     @Override
     public long count() throws SQLException {
-        String sql = "SELECT COUNT(*) FROM devices;";
+        String sql = "SELECT COUNT(*) FROM devices";
 
         try (Connection connection = rdb.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
@@ -101,7 +101,7 @@ public class JdbcDeviceRepository implements Repository<Device> {
         boolean online = result.getBoolean("online");
         boolean poweredOn = result.getBoolean("powered_on");
 
-        Device device = new Device(
+        return new Device(
                 deviceId,
                 ownerId,
                 name,
@@ -109,7 +109,6 @@ public class JdbcDeviceRepository implements Repository<Device> {
                 online,
                 poweredOn
         );
-        return device;
     }
 
     @Override
