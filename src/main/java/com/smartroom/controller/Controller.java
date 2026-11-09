@@ -37,7 +37,7 @@ public abstract class Controller<T> implements HttpHandler {
             switch (method) {
                 case "GET" -> handleGetAll(exchange);
                 case "POST" -> handlePost(exchange);
-                default -> methodNotAllowed(exchange);
+                default -> methodNotAllowed(exchange, "GET, POST");
             }
             return;
         } else if (path.startsWith(basePath + "/")) {
@@ -56,11 +56,30 @@ public abstract class Controller<T> implements HttpHandler {
 
             switch (method) {
                 case "GET" -> handleGetById(exchange, id);
-                default -> methodNotAllowed(exchange);
+                case "PUT" -> handlePut(exchange, id);
+                case "DELETE" -> handleDelete(exchange, id);
+                default -> methodNotAllowed(exchange, "GET, PUT, DELETE");
             }
             return;
         }
         sendStatus(exchange, 404);
+    }
+
+    protected void handleDelete(HttpExchange exchange, UUID id)
+            throws IOException {
+        try {
+            boolean deleted = repository.deleteById(id);
+
+            if (!deleted) {
+                sendStatus(exchange, 404);
+                return;
+            }
+
+            sendStatus(exchange, 204);
+        } catch (Exception e) {
+            System.err.println("Failed to delete entity: " + e.getMessage());
+            sendStatus(exchange, 500);
+        }
     }
 
     protected void handleGetAll(HttpExchange exchange) throws IOException {
@@ -123,10 +142,18 @@ public abstract class Controller<T> implements HttpHandler {
         exchange.close();
     }
 
-    protected void methodNotAllowed(HttpExchange exchange) throws IOException {
-        exchange.getResponseHeaders().set("Allow", "GET");
+    protected void methodNotAllowed(
+            HttpExchange exchange,
+            String allowedMethods
+    ) throws IOException {
+        exchange.getResponseHeaders().set("Allow", allowedMethods);
         sendStatus(exchange, 405);
     }
 
     protected abstract void handlePost(HttpExchange exchange) throws IOException;
+
+    protected abstract void handlePut(
+            HttpExchange exchange,
+            UUID id
+    ) throws IOException;
 }

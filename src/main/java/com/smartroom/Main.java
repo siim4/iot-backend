@@ -2,63 +2,66 @@ package com.smartroom;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartroom.controller.DeviceController;
-import com.smartroom.model.Device;
-import com.smartroom.persistence.JsonDB;
+import com.smartroom.controller.ModeController;
+import com.smartroom.controller.UserController;
 import com.smartroom.persistence.RelationalDB;
-import com.smartroom.repository.JdbcDeviceRepository;
+import com.smartroom.model.Device;
+import com.smartroom.model.Mode;
+import com.smartroom.model.User;
 import com.smartroom.repository.Repository;
+import com.smartroom.repository.JdbcDeviceRepository;
+import com.smartroom.repository.JdbcModeRepository;
+import com.smartroom.repository.JdbcUserRepository;
 import com.sun.net.httpserver.HttpServer;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.io.IOException;
 
 public class Main {
-    static void main(String[] args) {
+
+    public static void main(String[] args) throws IOException {
+
         ObjectMapper mapper = new ObjectMapper();
-        JsonDB db = new JsonDB(Path.of("data", "db.json"), mapper);
-        RelationalDB rdb = new RelationalDB(
+
+        RelationalDB db = new RelationalDB(
                 "jdbc:postgresql://localhost:5432/smartroom",
                 "smartroom",
                 "devpassword"
         );
 
-        try (Connection connection = rdb.getConnection()) {
-            System.out.println("Connected to PostgreSQL");
-        } catch (SQLException e) {
-            System.out.println("DB error: " + e.getMessage());
-        }
-        try {
+        Repository<User> userRepository =
+                new JdbcUserRepository(db);
 
-            //db.initialize();
+        Repository<Device> deviceRepository =
+                new JdbcDeviceRepository(db);
 
-            //Repository<Device> deviceRepository = new JsonDeviceRepository(db);
-            //deviceRepository.load();
-            Repository<Device> deviceRepository = new JdbcDeviceRepository(rdb);
+        Repository<Mode> modeRepository =
+                new JdbcModeRepository(db);
 
-            /*
-            For this test, after initializing the database and loading into the repo,
-            we start the server and register the controller.
-             */
-            HttpServer server = HttpServer.create(
-                    new InetSocketAddress(8080),
-                    0
-            );
+        HttpServer server = HttpServer.create(
+                new InetSocketAddress(8080),
+                0
+        );
 
-            server.createContext(
-                    "/api/devices",
-                    new DeviceController(deviceRepository, mapper)
-            );
+        server.createContext(
+                "/api/users",
+                new UserController(userRepository, mapper)
+        );
 
-            server.start();
+        server.createContext(
+                "/api/devices",
+                new DeviceController(deviceRepository, mapper)
+        );
 
-            System.out.println("SmartRoom API running at http://localhost:8080");
+        server.createContext(
+                "/api/modes",
+                new ModeController(modeRepository, mapper)
+        );
 
-        } catch (IOException ioe) {
-            System.err.println("Couldn't read file: " + ioe.getMessage());
-        }
+        server.start();
 
+        System.out.println(
+                "SmartRoom API running at http://localhost:8080"
+        );
     }
 }

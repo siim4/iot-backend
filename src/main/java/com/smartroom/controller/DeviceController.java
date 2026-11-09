@@ -3,11 +3,13 @@ package com.smartroom.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartroom.dto.CreateDeviceRequest;
+import com.smartroom.dto.UpdateDeviceRequest;
 import com.smartroom.model.Device;
 import com.smartroom.repository.Repository;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class DeviceController extends Controller<Device> {
     public DeviceController(Repository<Device> repository,
@@ -71,5 +73,76 @@ public class DeviceController extends Controller<Device> {
         );
 
         sendJson(exchange, 201, json);
+    }
+
+    @Override
+    protected void handlePut(HttpExchange exchange, UUID id)
+            throws IOException {
+
+        UpdateDeviceRequest request;
+
+        try {
+            request = mapper.readValue(
+                    exchange.getRequestBody(),
+                    UpdateDeviceRequest.class
+            );
+        } catch (JsonProcessingException e) {
+            sendStatus(exchange, 400);
+            return;
+        }
+
+        if (request == null
+                || request.ownerId() == null
+                || request.name() == null
+                || request.name().isBlank()
+                || request.type() == null
+                || request.online() == null
+                || request.poweredOn() == null) {
+            sendStatus(exchange, 400);
+            return;
+        }
+
+        boolean exists;
+
+        try {
+            exists = repository.existsById(id);
+        } catch (Exception e) {
+            System.err.println("Failed to check entity existence: " + e.getMessage());
+            sendStatus(exchange, 500);
+            return;
+        }
+
+        if (!exists) {
+            sendStatus(exchange, 404);
+            return;
+        }
+
+        Device updated = new Device(
+                id,
+                request.ownerId(),
+                request.name(),
+                request.type(),
+                request.online(),
+                request.poweredOn()
+        );
+
+        byte[] json;
+        boolean saved;
+
+        try {
+            json = mapper.writeValueAsBytes(updated);
+            saved = repository.save(updated);
+        } catch (Exception e) {
+            System.err.println("Failed to update entity: " + e.getMessage());
+            sendStatus(exchange, 500);
+            return;
+        }
+
+        if (!saved) {
+            sendStatus(exchange, 500);
+            return;
+        }
+
+        sendJson(exchange, 200, json);
     }
 }

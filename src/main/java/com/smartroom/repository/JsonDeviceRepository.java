@@ -3,6 +3,7 @@ package com.smartroom.repository;
 import com.smartroom.model.Device;
 import com.smartroom.persistence.JsonDB;
 
+import java.util.List;
 import java.util.UUID;
 
 public class JsonDeviceRepository extends JsonRepository<Device> {
@@ -21,5 +22,11 @@ public class JsonDeviceRepository extends JsonRepository<Device> {
     @Override
     protected UUID getId(Device device) {
         return device.getId();
+    }
+
+    public List<Device> findByOwnerId(UUID ownerId) {
+        return entities.values().stream()
+                .filter(device -> device.getOwnerId().equals(ownerId))
+                .toList();
     }
 }

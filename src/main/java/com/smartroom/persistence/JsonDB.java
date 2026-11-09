@@ -35,7 +35,7 @@ public class JsonDB {
     public void initialize() throws IOException {
         if (Files.notExists(path)) {
             Files.createDirectories(path.getParent());
-            Files.writeString(path, "{\"devices\": [], \"users\": []}");
+            Files.writeString(path, "{\"devices\": [], \"users\": [], \"modes\": []}");
         }
     }
 
