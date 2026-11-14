@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class JdbcDeviceRepository implements Repository<Device> {
+public class JdbcDeviceRepository implements DeviceRepository {
     private final RelationalDB rdb;
 
     public JdbcDeviceRepository(RelationalDB rdb) {
@@ -165,7 +165,7 @@ public class JdbcDeviceRepository implements Repository<Device> {
         return deleteById(entity.getId());
     }
 
-    public List<Device> findOwnerId(UUID ownerId) throws SQLException {
+    public List<Device> findByOwnerId(UUID ownerId) throws SQLException {
         String sql = """
                 SELECT id, owner_id, name, type, online, powered_on
                 FROM devices

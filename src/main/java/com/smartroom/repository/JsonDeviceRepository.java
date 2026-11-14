@@ -6,7 +6,9 @@ import com.smartroom.persistence.JsonDB;
 import java.util.List;
 import java.util.UUID;
 
-public class JsonDeviceRepository extends JsonRepository<Device> {
+public class JsonDeviceRepository
+        extends JsonRepository<Device>
+        implements DeviceRepository {
 
     public JsonDeviceRepository(JsonDB db) {
         super(db, "devices", Device.class);
