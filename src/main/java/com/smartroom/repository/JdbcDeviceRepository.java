@@ -165,6 +165,7 @@ public class JdbcDeviceRepository implements DeviceRepository {
         return deleteById(entity.getId());
     }
 
+    @Override
     public List<Device> findByOwnerId(UUID ownerId) throws SQLException {
         String sql = """
                 SELECT id, owner_id, name, type, online, powered_on

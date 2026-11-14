@@ -14,19 +14,54 @@ import com.smartroom.repository.JdbcModeRepository;
 import com.smartroom.repository.JdbcUserRepository;
 import com.sun.net.httpserver.HttpServer;
 
+import java.util.Properties;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.net.InetSocketAddress;
 import java.io.IOException;
 
 public class Main {
 
+    // At least for now, we keep the exception reaching JVM in case of missing config.
     public static void main(String[] args) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
 
+        Properties properties = new Properties();
+
+        //TODO: before eventual deploy, make path selectable.
+        try (var input = Files.newInputStream(
+                Path.of("config.properties")
+        )) {
+
+            properties.load(input);
+        }
+
+        String url = properties.getProperty("db.url");
+
+        if (url == null || url.isBlank()) {
+
+            throw new IllegalStateException("URL hasn't been configured for this environment.");
+        }
+
+        String username = properties.getProperty("db.username");
+
+        if (username == null || username.isBlank()) {
+
+            throw new IllegalStateException("No database user configured for this environment.");
+        }
+
+        String password = properties.getProperty("db.password");
+
+        if (password == null || password.isBlank()) {
+
+            throw new IllegalStateException("Database password missing.");
+        }
+
         RelationalDB db = new RelationalDB(
-                "jdbc:postgresql://localhost:5432/smartroom",
-                "smartroom",
-                "devpassword"
+                url,
+                username,
+                password
         );
 
         Repository<User> userRepository =
