@@ -4,25 +4,45 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartroom.controller.DeviceController;
 import com.smartroom.controller.ModeController;
 import com.smartroom.controller.UserController;
-import com.smartroom.persistence.RelationalDB;
 import com.smartroom.model.Device;
 import com.smartroom.model.Mode;
 import com.smartroom.model.User;
-import com.smartroom.repository.Repository;
+import com.smartroom.persistence.RelationalDB;
 import com.smartroom.repository.JdbcDeviceRepository;
 import com.smartroom.repository.JdbcModeRepository;
 import com.smartroom.repository.JdbcUserRepository;
+import com.smartroom.repository.Repository;
 import com.sun.net.httpserver.HttpServer;
 
-import java.util.Properties;
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.net.InetSocketAddress;
-import java.io.IOException;
+import java.util.Properties;
 
 public class Main {
 
-    // At least for now, we keep the exception reaching JVM in case of missing config.
+//    static void main(String[] args) throws IOException {
+//        Path path = Path.of("data", "db.json");
+//        Files.createDirectories(path.toAbsolutePath().getParent());
+//        ObjectMapper mapper = new ObjectMapper();
+//        JsonDB db = new JsonDB(path, mapper);
+//        db.initialize();
+//        JsonRepository<Device> deviceRepository = new JsonDeviceRepository(db);
+//        deviceRepository.load();
+//        HttpServer server = HttpServer.create(
+//                new InetSocketAddress(8080),
+//                0
+//        );
+//        server.createContext(
+//                "/api/devices",
+//                new DeviceController(deviceRepository, mapper)
+//        );
+//        server.start();
+//        System.out.println("Listening on port 8080...");
+//    }
+
+    //     At least for now, we keep the exception reaching JVM in case of missing config.
     public static void main(String[] args) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();

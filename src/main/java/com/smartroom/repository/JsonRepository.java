@@ -130,21 +130,21 @@ public abstract class JsonRepository<T> implements Repository<T> {
             throw new IllegalArgumentException("Entity ID cannot be null");
         }
 
-        JsonNode root = db.readJson();
+        JsonNode root = db.readJson();// Reads file as string with readFile and returns tree with mapper.
         ArrayNode entityArray = getEntityArray(root);
-        JsonNode entityNode = db.toJsonNode(entity);
+        JsonNode entityNode = db.toJsonNode(entity);// Value to tree in terms of Jackson.
 
         for (int i = 0; i < entityArray.size(); i++) {
             JsonNode existing = entityArray.get(i);
             if (id.toString().equals(existing.path("id").asText())) {
-                entityArray.set(i, entityNode);
+                entityArray.set(i, entityNode);// If ID matches, node is replaced.
                 found = true;
                 break;
             }
         }
 
         if (!found) {
-            entityArray.add(entityNode);
+            entityArray.add(entityNode);// If ID isn't found, node is appended.
         }
 
         db.writeJson(root);

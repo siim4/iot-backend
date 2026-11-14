@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 public class JsonDB {
     private final Path path;
@@ -53,7 +54,23 @@ public class JsonDB {
     }
 
     public void writeJson(JsonNode root) throws IOException {
-        mapper.writeValue(path.toFile(), root);
+        Path temporary = Files.createTempFile(
+                path.toAbsolutePath().getParent(),
+                "smartroom-",
+                ".tmp"
+        );
+
+        try {
+            mapper.writeValue(temporary.toFile(), root);
+            Files.move(
+                    temporary,
+                    path,
+                    StandardCopyOption.ATOMIC_MOVE
+            );
+
+        } finally {
+            Files.deleteIfExists(temporary);
+        }
     }
 
     public JsonNode toJsonNode(Object value) {
