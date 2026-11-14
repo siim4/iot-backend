@@ -93,6 +93,16 @@ public class Main {
                 new ModeController(modeRepository, mapper)
         );
 
+        /*
+        When termination signal is received we stop the server
+        and shutdown the connection pool from the database.
+         */
+        //TODO: coordinate better shutdown/cleanup for prod.
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            server.stop(0);
+            db.close();
+        }));
+
         server.start();
 
         System.out.println(
