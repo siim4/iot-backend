@@ -18,7 +18,7 @@ public class JsonModeRepository extends JsonRepository<Mode> {
     }
 
     public List<Mode> findByOwnerId(UUID ownerId) {
-        return entities.values().stream()
+        return findAll().stream()
                 .filter(mode -> mode.ownerId().equals(ownerId))
                 .toList();
     }

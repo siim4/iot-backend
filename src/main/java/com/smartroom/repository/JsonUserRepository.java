@@ -18,7 +18,7 @@ public class JsonUserRepository extends JsonRepository<User> {
     }
 
     public Optional<User> findByUsername(String username) {
-        return entities.values().stream()
+        return findAll().stream()
                 .filter(user -> user.username().equals(username))
                 .findFirst();
     }

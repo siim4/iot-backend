@@ -17,7 +17,7 @@ public abstract class JsonRepository<T> implements Repository<T> {
 
     //Protected to allow subclasses to access.
     //TODO: refactor for stronger encapsulation.
-    protected final Map<UUID, T> entities;
+    private final Map<UUID, T> entities;
     protected final JsonDB db;
     private final String arrayName;
     private final Class<T> entityType;

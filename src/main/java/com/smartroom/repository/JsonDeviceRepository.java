@@ -15,8 +15,8 @@ public class JsonDeviceRepository
     }
 
     public void showAllDevices() {
-        for (var device : entities.entrySet()) {
-            System.out.println(device.getValue());
+        for (var device : findAll()) { // Also replaced direct access to entities map here.
+            System.out.println(device);
             System.out.println();
         }
     }
@@ -27,7 +27,7 @@ public class JsonDeviceRepository
     }
 
     public List<Device> findByOwnerId(UUID ownerId) {
-        return entities.values().stream()
+        return findAll().stream()  // Replaced direct access to super.entities for improved encapsulation.
                 .filter(device -> device.getOwnerId().equals(ownerId))
                 .toList();
     }
