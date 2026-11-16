@@ -103,7 +103,7 @@ public abstract class Controller<T> implements HttpHandler {
             Optional<T> entity = repository.findById(id);
 
             if (entity.isEmpty()) {
-                sendStatus(exchange, 404);
+                sendError(exchange, 404, "Resource not found");
                 return;
             }
 
@@ -140,6 +140,16 @@ public abstract class Controller<T> implements HttpHandler {
     ) throws IOException {
         exchange.sendResponseHeaders(status, -1);
         exchange.close();
+    }
+
+    protected void sendError(
+            HttpExchange exchange,
+            int status,
+            String message
+    ) throws IOException {
+        var error = mapper.createObjectNode().put("error", message);
+        byte[] json = mapper.writeValueAsBytes(error);
+        sendJson(exchange, status, json);
     }
 
     protected void methodNotAllowed(
