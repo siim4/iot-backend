@@ -29,6 +29,7 @@ public class Main {
 //        JsonDB db = new JsonDB(path, mapper);
 //        db.initialize();
 //        JsonRepository<Device> deviceRepository = new JsonDeviceRepository(db);
+//        JsonRepository<User> userJsonRepository = new JsonUserRepository(db);
 //        deviceRepository.load();
 //        HttpServer server = HttpServer.create(
 //                new InetSocketAddress(8080),
@@ -38,6 +39,11 @@ public class Main {
 //                "/api/devices",
 //                new DeviceController(deviceRepository, mapper)
 //        );
+//        server.createContext(
+//                "/api/users",
+//                new UserController(userJsonRepository, mapper)
+//        );
+//
 //        server.start();
 //        System.out.println("Listening on port 8080...");
 //    }
